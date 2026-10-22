@@ -11,15 +11,12 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: #ffffff;
             color: #111111;
-        }
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
         }
         .candidate-row {
             transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -33,7 +30,7 @@
         <!-- Header -->
         <header class="border-b border-neutral-200 pb-8 mb-8">
             
-            <!-- Логотипи видань-партнерів зверху (точні назви файлів з репозиторію) -->
+            <!-- Логотипи видань-партнерів зверху -->
             <div class="mb-8 flex flex-wrap items-center justify-center sm:justify-start gap-8 md:gap-12 opacity-80">
                 <img src="Українська_правда.svg" alt="Українська правда" class="h-6 md:h-8 object-contain grayscale hover:grayscale-0 transition duration-300">
                 <img src="Forbes_Ukraine_logo.svg" alt="Forbes Ukraine" class="h-6 md:h-8 object-contain grayscale hover:grayscale-0 transition duration-300">
@@ -54,7 +51,7 @@
         <div class="overflow-x-auto border-t border-b border-neutral-200">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b border-neutral-200 text-xs font-mono text-neutral-400 uppercase tracking-wider">
+                    <tr class="border-b border-neutral-200 text-xs text-neutral-400 uppercase tracking-wider">
                         <th class="py-4 px-3 md:px-4 w-12 md:w-16 text-center">Місце</th>
                         <th class="py-4 px-3 md:px-4">Кандидат / Редакція</th>
                         <th class="py-4 px-4 text-center hidden md:table-cell">Етап 1 <span class="block text-[10px] text-neutral-300">(/20)</span></th>
@@ -66,7 +63,7 @@
                 <tbody class="divide-y divide-neutral-100 text-sm">
                     <template x-if="filteredCandidates.length === 0">
                         <tr>
-                            <td colspan="6" class="py-16 text-center text-neutral-400 font-mono text-sm">
+                            <td colspan="6" class="py-16 text-center text-neutral-400 text-sm">
                                 Завантаження даних з бази даних...
                             </td>
                         </tr>
@@ -75,7 +72,7 @@
                     <template x-for="candidate in filteredCandidates" :key="candidate.id">
                         <tr class="candidate-row hover:bg-neutral-50/80">
                             <!-- Місце -->
-                            <td class="py-4 px-3 md:px-4 text-center font-mono font-bold text-neutral-900 align-top md:align-middle">
+                            <td class="py-4 px-3 md:px-4 text-center font-bold text-neutral-900 align-top md:align-middle">
                                 <span x-text="candidate.rank" :class="candidate.rank <= 3 && candidate.total_score > 0 ? 'text-neutral-950 font-extrabold underline decoration-1 underline-offset-4' : 'text-neutral-500'"></span>
                             </td>
 
@@ -96,15 +93,15 @@
 
                                     <!-- Плашка Топ-10 -->
                                     <template x-if="candidate.rank <= 10 && candidate.total_score > 0">
-                                        <span class="text-[10px] font-mono uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
+                                        <span class="text-[10px] uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
                                     </template>
                                 </div>
-                                <div class="text-xs text-neutral-500 mt-0.5 font-mono">
+                                <div class="text-xs text-neutral-500 mt-0.5">
                                     <span class="text-neutral-700 font-medium" x-text="candidate.media"></span>
                                 </div>
 
                                 <!-- Блок з балами по етапах (видимий ТІЛЬКИ на телефонах під ім'ям) -->
-                                <div class="mt-2 flex items-center gap-3 text-[11px] font-mono text-neutral-500 md:hidden bg-neutral-50 p-2 border border-neutral-100">
+                                <div class="mt-2 flex items-center gap-3 text-[11px] text-neutral-500 md:hidden bg-neutral-50 p-2 border border-neutral-100">
                                     <span>Е1: <strong class="text-neutral-800" x-text="Number(candidate.stage1).toFixed(1)"></strong></span>
                                     <span>•</span>
                                     <span>Е2: <strong class="text-neutral-800" x-text="Number(candidate.stage2).toFixed(1)"></strong></span>
@@ -114,12 +111,12 @@
                             </td>
                             
                             <!-- На десктопі етапи в звичайних колонках -->
-                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage1).toFixed(1)"></td>
-                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage2).toFixed(1)"></td>
-                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage3).toFixed(1)"></td>
+                            <td class="py-4 px-4 text-center text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage1).toFixed(1)"></td>
+                            <td class="py-4 px-4 text-center text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage2).toFixed(1)"></td>
+                            <td class="py-4 px-4 text-center text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage3).toFixed(1)"></td>
 
                             <!-- Загальний бал -->
-                            <td class="py-4 px-3 md:px-4 text-right font-mono font-bold text-base text-neutral-900 align-top md:align-middle" x-text="Number(candidate.total_score).toFixed(2)"></td>
+                            <td class="py-4 px-3 md:px-4 text-right font-bold text-base text-neutral-900 align-top md:align-middle" x-text="Number(candidate.total_score).toFixed(2)"></td>
                         </tr>
                     </template>
                 </tbody>
