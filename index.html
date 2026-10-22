@@ -35,7 +35,7 @@
             <h1 class="text-3xl md:text-4xl font-bold tracking-tight">РЕЙТИНГ СТАЖУВАННЯ</h1>
             <p class="text-sm text-neutral-500 mt-2">Проєкт реалізовано за підтримки Посольства Великої Британії в Україні, BBC Media Action, фонду «Відродження» та Thomson Reuters Foundation.</p>
             
-            <!-- Зелена плашка з нормальним читабельним шрифтом -->
+            <!-- Зелена плашка -->
             <div class="mt-4 inline-flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 text-emerald-900 px-4 py-3 text-xs sm:text-sm font-medium">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                 <span>Результати оновлюються в режимі реального часу. Повні результати очікуються приблизно до 21:00. Оновлювати сторінку не потрібно.</span>
@@ -43,8 +43,8 @@
         </header>
 
         <!-- Scoreboard Table -->
-        <div class="overflow-x-auto border-t border-b border-neutral-200">
-            <table class="w-full text-left border-collapse" x-data="{ openId: null }">
+        <div class="overflow-x-auto border-t border-b border-neutral-200" x-data="{ openId: null }">
+            <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-neutral-200 text-xs font-mono text-neutral-400 uppercase tracking-wider">
                         <th class="py-4 px-3 md:px-4 w-12 md:w-16 text-center">Місце</th>
@@ -65,75 +65,80 @@
                     </template>
 
                     <template x-for="candidate in filteredCandidates" :key="candidate.id">
-                        <>
-                            <!-- Основний рядок -->
-                            <tr class="candidate-row hover:bg-neutral-50/80">
-                                <td class="py-4 px-3 md:px-4 text-center font-mono font-bold text-neutral-900">
-                                    <span x-text="candidate.rank" :class="candidate.rank <= 3 && candidate.total_score > 0 ? 'text-neutral-950 font-extrabold underline decoration-1 underline-offset-4' : 'text-neutral-500'"></span>
-                                </td>
-                                <td class="py-4 px-3 md:px-4">
-                                    <div class="font-semibold text-neutral-900 flex items-center justify-between gap-2">
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <span x-text="candidate.name"></span>
+                        <template x-data="{}">
+                            <!-- Використовуємо звичайні теги замість порожніх фрагментів для стабільної роботи на мобільних -->
+                            <tr>
+                                <!-- Рядок кандидата -->
+                                <td colspan="6" class="p-0 border-0">
+                                    <table class="w-full">
+                                        <tr class="candidate-row hover:bg-neutral-50/80">
+                                            <td class="py-4 px-3 md:px-4 text-center font-mono font-bold text-neutral-900 w-12 md:w-16">
+                                                <span x-text="candidate.rank" :class="candidate.rank <= 3 && candidate.total_score > 0 ? 'text-neutral-950 font-extrabold underline decoration-1 underline-offset-4' : 'text-neutral-500'"></span>
+                                            </td>
+                                            <td class="py-4 px-3 md:px-4">
+                                                <div class="font-semibold text-neutral-900 flex items-center justify-between gap-2">
+                                                    <div class="flex items-center gap-2 flex-wrap">
+                                                        <span x-text="candidate.name"></span>
+                                                        
+                                                        <!-- Стрілка вгору -->
+                                                        <template x-if="candidate.prevRank && candidate.rank < candidate.prevRank">
+                                                            <span class="text-emerald-600 font-bold text-xs" title="Піднявся в рейтингу">▲</span>
+                                                        </template>
+                                                        
+                                                        <!-- Стрілка вниз -->
+                                                        <template x-if="candidate.prevRank && candidate.rank > candidate.prevRank">
+                                                            <span class="text-red-600 font-bold text-xs" title="Опустився в рейтингу">▼</span>
+                                                        </template>
+
+                                                        <!-- Плашка Топ-10 -->
+                                                        <template x-if="candidate.rank <= 10 && candidate.total_score > 0">
+                                                            <span class="text-[10px] font-mono uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
+                                                        </template>
+                                                    </div>
+
+                                                    <!-- Мобільна кнопка-стрілочка для розгортання етапів -->
+                                                    <button @click="openId === candidate.id ? openId = null : openId = candidate.id" 
+                                                            class="md:hidden text-neutral-500 hover:text-neutral-900 font-mono text-xs flex items-center gap-1 border border-neutral-200 bg-neutral-50 px-2.5 py-1 shrink-0">
+                                                        <span>Бали</span>
+                                                        <span x-text="openId === candidate.id ? '▲' : '▼'"></span>
+                                                    </button>
+                                                </div>
+                                                <div class="text-xs text-neutral-500 mt-0.5 font-mono">
+                                                    <span class="text-neutral-700 font-medium" x-text="candidate.media"></span>
+                                                </div>
+                                            </td>
                                             
-                                            <!-- Стрілка вгору -->
-                                            <template x-if="candidate.prevRank && candidate.rank < candidate.prevRank">
-                                                <span class="text-emerald-600 font-bold text-xs" title="Піднявся в рейтингу">▲</span>
-                                            </template>
-                                            
-                                            <!-- Стрілка вниз -->
-                                            <template x-if="candidate.prevRank && candidate.rank > candidate.prevRank">
-                                                <span class="text-red-600 font-bold text-xs" title="Опустився в рейтингу">▼</span>
-                                            </template>
+                                            <!-- На десктопі етапи в колонках -->
+                                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage1).toFixed(1)"></td>
+                                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage2).toFixed(1)"></td>
+                                            <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage3).toFixed(1)"></td>
 
-                                            <!-- Плашка Топ-10 -->
-                                            <template x-if="candidate.rank <= 10 && candidate.total_score > 0">
-                                                <span class="text-[10px] font-mono uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
-                                            </template>
-                                        </div>
+                                            <td class="py-4 px-3 md:px-4 text-right font-mono font-bold text-base text-neutral-900" x-text="Number(candidate.total_score).toFixed(2)"></td>
+                                        </tr>
 
-                                        <!-- Мобільна кнопка-стрілочка для розгортання етапів -->
-                                        <button @click="openId === candidate.id ? openId = null : openId = candidate.id" 
-                                                class="md:hidden text-neutral-500 hover:text-neutral-900 font-mono text-xs flex items-center gap-1 border border-neutral-200 bg-neutral-50 px-2.5 py-1">
-                                            <span>Бали</span>
-                                            <span x-text="openId === candidate.id ? '▲' : '▼'"></span>
-                                        </button>
-                                    </div>
-                                    <div class="text-xs text-neutral-500 mt-0.5 font-mono">
-                                        <span class="text-neutral-700 font-medium" x-text="candidate.media"></span>
-                                    </div>
+                                        <!-- Випадаючий блок з балами виключно для мобільних пристроїв -->
+                                        <tr class="bg-neutral-50/90 md:hidden" :class="openId === candidate.id ? '' : 'hidden'">
+                                            <td colspan="4" class="py-3 px-4">
+                                                <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
+                                                    <div class="bg-white p-2 border border-neutral-200">
+                                                        <span class="block text-[10px] text-neutral-400 uppercase">Етап 1 (/20)</span>
+                                                        <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage1).toFixed(1)"></span>
+                                                    </div>
+                                                    <div class="bg-white p-2 border border-neutral-200">
+                                                        <span class="block text-[10px] text-neutral-400 uppercase">Етап 2 (/40)</span>
+                                                        <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage2).toFixed(1)"></span>
+                                                    </div>
+                                                    <div class="bg-white p-2 border border-neutral-200">
+                                                        <span class="block text-[10px] text-neutral-400 uppercase">Етап 3 (/40)</span>
+                                                        <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage3).toFixed(1)"></span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
-                                
-                                <!-- На десктопі етапи в колонках -->
-                                <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage1).toFixed(1)"></td>
-                                <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage2).toFixed(1)"></td>
-                                <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage3).toFixed(1)"></td>
-
-                                <td class="py-4 px-3 md:px-4 text-right font-mono font-bold text-base text-neutral-900" x-text="Number(candidate.total_score).toFixed(2)"></td>
                             </tr>
-
-                            <!-- Випадаючий блок з балами виключно для мобільних пристроїв -->
-                            <template x-if="openId === candidate.id">
-                                <tr class="bg-neutral-50/90 md:hidden">
-                                    <td colspan="3" class="py-3 px-4">
-                                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
-                                            <div class="bg-white p-2 border border-neutral-200">
-                                                <span class="block text-[10px] text-neutral-400 uppercase">Етап 1 (/20)</span>
-                                                <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage1).toFixed(1)"></span>
-                                            </div>
-                                            <div class="bg-white p-2 border border-neutral-200">
-                                                <span class="block text-[10px] text-neutral-400 uppercase">Етап 2 (/40)</span>
-                                                <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage2).toFixed(1)"></span>
-                                            </div>
-                                            <div class="bg-white p-2 border border-neutral-200">
-                                                <span class="block text-[10px] text-neutral-400 uppercase">Етап 3 (/40)</span>
-                                                <span class="font-bold text-neutral-800 text-sm" x-text="Number(candidate.stage3).toFixed(1)"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </>
+                        </template>
                     </template>
                 </tbody>
             </table>
