@@ -72,6 +72,17 @@
                             <td class="py-4 px-4">
                                 <div class="font-semibold text-neutral-900 flex items-center gap-2">
                                     <span x-text="candidate.name"></span>
+                                    
+                                    <!-- Стрілка вгору (зелена) якщо місце покращилося -->
+                                    <template x-if="candidate.prevRank && candidate.rank < candidate.prevRank">
+                                        <span class="text-emerald-600 font-bold text-xs" title="Піднявся в рейтингу">▲</span>
+                                    </template>
+                                    
+                                    <!-- Стрілка вниз (червона) якщо місце погіршилося -->
+                                    <template x-if="candidate.prevRank && candidate.rank > candidate.prevRank">
+                                        <span class="text-red-600 font-bold text-xs" title="Опустився в рейтингу">▼</span>
+                                    </template>
+
                                     <template x-if="candidate.rank <= 10 && candidate.total_score > 0">
                                         <span class="text-[10px] font-mono uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
                                     </template>
@@ -101,6 +112,7 @@
         function publicScoreboard() {
             return {
                 rawCandidates: [],
+                previousRanks: {}, // Зберігаємо попередні місця учасників
 
                 init() {
                     this.fetchData();
@@ -114,6 +126,20 @@
                         .limit(1000);
                     
                     if (!error && data) {
+                        // Перед оновленням масиву фіксуємо поточні ранги як попередні
+                        if (this.rawCandidates.length > 0) {
+                            let oldSorted = [...this.rawCandidates].map(c => {
+                                const s1 = parseFloat(c.stage1) || 0;
+                                const s2 = parseFloat(c.stage2) || 0;
+                                const s3 = parseFloat(c.stage3) || 0;
+                                return { ...c, total: (s1 * 0.2) + (s2 * 0.4) + (s3 * 0.4) };
+                            });
+                            oldSorted.sort((a, b) => b.total - a.total);
+                            oldSorted.forEach((item, idx) => {
+                                this.previousRanks[item.id] = idx + 1;
+                            });
+                        }
+
                         this.rawCandidates = data;
                     } else {
                         console.error('Помилка завантаження:', error);
@@ -142,6 +168,8 @@
 
                     res.forEach((item, idx) => {
                         item.rank = idx + 1;
+                        // Підтягуємо попередній ранг для порівняння зі збережених
+                        item.prevRank = this.previousRanks[item.id] || item.rank;
                     });
 
                     return res;
