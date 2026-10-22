@@ -40,7 +40,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Форма добавления кандидата -->
+            <!-- Форма додавання кандидата -->
             <div class="bg-white p-6 border border-neutral-200 shadow-sm h-fit">
                 <h2 class="text-base font-bold mb-4 pb-2 border-b border-neutral-100">Додати кандидата</h2>
                 
@@ -84,7 +84,7 @@
                 </form>
             </div>
 
-            <!-- Таблица управления баллами -->
+            <!-- Таблиця керування балами -->
             <div class="lg:col-span-2 bg-white border border-neutral-200 shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-neutral-100 flex justify-between items-center">
                     <h2 class="text-base font-bold">Список кандидатів (Редагування)</h2>
@@ -106,7 +106,7 @@
                             <template x-if="candidates.length === 0">
                                 <tr>
                                     <td colspan="5" class="py-12 text-center text-neutral-400 font-mono text-sm">
-                                        Список поки порожний. Додайте першого кандидата зліва.
+                                        Список поки порожній. Додайте першого кандидата зліва.
                                     </td>
                                 </tr>
                             </template>
@@ -117,7 +117,7 @@
                                         <div class="font-semibold text-neutral-900" x-text="candidate.name"></div>
                                         <div class="text-xs text-neutral-500 font-mono" x-text="candidate.media"></div>
                                     </td>
-                                    <!-- Поля быстрого редактирования баллов -->
+                                    <!-- Поля швидкого редагування балів -->
                                     <td class="py-3 px-3 text-center">
                                         <input type="number" step="0.1" x-model.number="candidate.stage1" @change="updateCandidate(candidate)"
                                             class="w-16 bg-neutral-50 border border-neutral-200 px-1 py-1 text-center font-mono text-xs focus:bg-white focus:border-neutral-900">
@@ -146,11 +146,10 @@
 
     </main>
 
-    <!-- Скрипт управления и связи с Supabase -->
+    <!-- Скрипт керування та зв'язку з Supabase -->
     <script>
-        // Вставьте сюда ваши ключи проекта из Supabase (те же самые, что и на публичном сайте)
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const SUPABASE_URL = 'https://xesvenfrzgqiawetwtxo.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhlc3ZlbmFrZmx6Z3FpYXdldHd0eG8iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MjY1MjY0NywiZXhwIjoyMTA4MjI4NjQ3f5.c1RD4vITIz0PHvEM-EJ0VS9HYF7OoxUL9-g2juWPdmY';
         
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -169,7 +168,7 @@
                     this.fetchCandidates();
                 },
 
-                // Загрузка списка из базы
+                // Завантаження списку з бази
                 async fetchCandidates() {
                     const { data, error } = await supabaseClient
                         .from('candidates')
@@ -181,7 +180,7 @@
                     }
                 },
 
-                // Добавление нового кандидата
+                // Додавання нового кандидата
                 async addCandidate() {
                     if (!this.newCandidate.name.trim()) return;
 
@@ -190,7 +189,6 @@
                         .insert([this.newCandidate]);
 
                     if (!error) {
-                        // Сброс формы и обновление списка
                         this.newCandidate.name = '';
                         this.newCandidate.stage1 = 0;
                         this.newCandidate.stage2 = 0;
@@ -201,7 +199,7 @@
                     }
                 },
 
-                // Автоматическое обновление баллов при изменении в инпуте
+                // Автоматичне оновлення балів при зміні в інпуті
                 async updateCandidate(candidate) {
                     const { error } = await supabaseClient
                         .from('candidates')
@@ -217,7 +215,7 @@
                     }
                 },
 
-                // Удаление кандидата
+                // Видалення кандидата
                 async deleteCandidate(id) {
                     if (!confirm('Ви дійсно хочете видалити цього кандидата?')) return;
 
