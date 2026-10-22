@@ -35,9 +35,9 @@
             <h1 class="text-3xl md:text-4xl font-bold tracking-tight">РЕЙТИНГ СТАЖУВАННЯ</h1>
             <p class="text-sm text-neutral-500 mt-2">Проєкт реалізовано за підтримки Посольства Великої Британії в Україні, BBC Media Action, фонду «Відродження» та Thomson Reuters Foundation.</p>
             
-            <!-- Зелена примітна плашка -->
-            <div class="mt-4 inline-flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2.5 text-xs font-mono">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <!-- Зелена плашка з нормальним читабельним шрифтом -->
+            <div class="mt-4 inline-flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 text-emerald-900 px-4 py-3 text-xs sm:text-sm font-medium">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                 <span>Результати оновлюються в режимі реального часу. Повні результати очікуються приблизно до 21:00. Оновлювати сторінку не потрібно.</span>
             </div>
         </header>
@@ -94,7 +94,7 @@
 
                                         <!-- Мобільна кнопка-стрілочка для розгортання етапів -->
                                         <button @click="openId === candidate.id ? openId = null : openId = candidate.id" 
-                                                class="md:hidden text-neutral-400 hover:text-neutral-900 p-1 font-mono text-xs flex items-center gap-1 border border-neutral-200 bg-neutral-50 px-2 py-1">
+                                                class="md:hidden text-neutral-500 hover:text-neutral-900 font-mono text-xs flex items-center gap-1 border border-neutral-200 bg-neutral-50 px-2.5 py-1">
                                             <span>Бали</span>
                                             <span x-text="openId === candidate.id ? '▲' : '▼'"></span>
                                         </button>
@@ -143,7 +143,7 @@
 
     <script>
         const SUPABASE_URL = 'https://xesvenfrzgqiawetwtxo.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhlc3ZlbmZyemdxaWF3ZXR3dHhvIiwicm9sZSI6Inhlc25vbiIsImlhdCI6MTc5MjY1MjY0NywiZXhwIjoyMTA4MjI4NjQ3f5.c1RD4vITIz0PHvEM-EJ0VS9HYF7OoxUL9-g2juWPdmY';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhlc3ZlbmZyemdxaWF3ZXR3dHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NTI2NDcsImV4cCI6MjEwODIyODY0N30.c1RD4vITIz0PHvEM-EJ0VS9HYF7OoxUL9-g2juWPdmY';
         
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
