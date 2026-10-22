@@ -21,7 +21,6 @@
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* Плавне переміщення рядків при зміні рейтингу */
         .candidate-row {
             transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -37,10 +36,9 @@
                 <h1 class="text-3xl md:text-4xl font-bold tracking-tight">РЕЙТИНГ СТАЖУВАННЯ</h1>
                 <p class="text-sm text-neutral-500 mt-2">Фінальний етап відбору та динамічний розподіл за результатами тестування.</p>
             </div>
-            <!-- Live Status Indicator -->
             <div class="flex items-center gap-2 text-xs font-mono text-neutral-500 bg-neutral-50 px-3 py-2 border border-neutral-200 self-start md:self-auto">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>LIVE СИНХРОНІЗАЦІЯ</span>
+                <span>LIVE СИНХРОНІЗАЦІЯ (БАЗА ДАНИХ)</span>
             </div>
         </header>
 
@@ -66,24 +64,19 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100 text-sm">
-                    <!-- Якщо список порожній -->
                     <template x-if="filteredCandidates.length === 0">
                         <tr>
                             <td colspan="6" class="py-16 text-center text-neutral-400 font-mono text-sm">
-                                Очікування даних від адміністративної панелі...
+                                Завантаження даних з бази даних...
                             </td>
                         </tr>
                     </template>
 
-                    <!-- Список кандидатів -->
                     <template x-for="candidate in filteredCandidates" :key="candidate.id">
                         <tr class="candidate-row hover:bg-neutral-50/80">
-                            <!-- Ранг -->
                             <td class="py-4 px-4 text-center font-mono font-bold text-neutral-900">
                                 <span x-text="candidate.rank" :class="candidate.rank <= 3 ? 'text-neutral-950 font-extrabold underline decoration-1 underline-offset-4' : 'text-neutral-500'"></span>
                             </td>
-
-                            <!-- Ім'я та редакція -->
                             <td class="py-4 px-4">
                                 <div class="font-semibold text-neutral-900 flex items-center gap-2">
                                     <span x-text="candidate.name"></span>
@@ -95,17 +88,9 @@
                                     <span class="text-neutral-700 font-medium" x-text="candidate.media"></span>
                                 </div>
                             </td>
-
-                            <!-- Етап 1 -->
                             <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage1).toFixed(1)"></td>
-
-                            <!-- Етап 2 -->
                             <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage2).toFixed(1)"></td>
-
-                            <!-- Етап 3 -->
                             <td class="py-4 px-4 text-center font-mono text-neutral-600 hidden md:table-cell" x-text="Number(candidate.stage3).toFixed(1)"></td>
-
-                            <!-- Загальний бал -->
                             <td class="py-4 px-4 text-right font-mono font-bold text-base text-neutral-900" x-text="Number(candidate.total_score).toFixed(2)"></td>
                         </tr>
                     </template>
@@ -113,15 +98,13 @@
             </table>
         </div>
 
-        <!-- Footer -->
         <footer class="mt-16 pt-6 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-neutral-400 gap-4">
             <div>Автоматизований розрахунок: <span class="text-neutral-700">(Е1 × 0.2) + (Е2 × 0.4) + (Е3 × 0.4)</span></div>
-            <div>GitHub Pages • Realtime Engine</div>
+            <div>Supabase DB • Realtime Engine</div>
         </footer>
 
     </main>
 
-    <!-- Логіка підключення до Supabase та сортування -->
     <script>
         const SUPABASE_URL = 'https://xesvenfrzgqiawetwtxo.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhlc3ZlbmZyemdxaWF3ZXR3dHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NTI2NDcsImV4cCI6MjEwODIyODY0N30.c1RD4vITIz0PHvEM-EJ0VS9HYF7OoxUL9-g2juWPdmY';
@@ -138,18 +121,20 @@
                     this.subscribeRealtime();
                 },
 
-                // Завантаження початкових даних з бази
+                // Загружаем ВСЕ записи из базы без ограничения в 10-50 строк
                 async fetchData() {
                     const { data, error } = await supabaseClient
                         .from('candidates')
-                        .select('*');
+                        .select('*')
+                        .limit(1000); // Запас под всех кандидатов
                     
                     if (!error && data) {
                         this.rawCandidates = data;
+                    } else {
+                        console.error('Помилка завантаження:', error);
                     }
                 },
 
-                // Підписка на зміни в реальному часі через WebSockets
                 subscribeRealtime() {
                     supabaseClient
                         .channel('public:candidates')
@@ -159,7 +144,6 @@
                         .subscribe();
                 },
 
-                // Геттер для фільтрації, автоматичного розрахунку формули та сортування місць
                 get filteredCandidates() {
                     let res = this.rawCandidates.map(c => {
                         const s1 = parseFloat(c.stage1) || 0;
@@ -169,13 +153,9 @@
                         return { ...c, total_score: total };
                     });
 
-                    // Фільтрація за пошуком
                     res = res.filter(c => c.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
-
-                    // Сортування за спаданням загального бала
                     res.sort((a, b) => b.total_score - a.total_score);
 
-                    // Присвоєння актуальних місць (рангів)
                     res.forEach((item, idx) => {
                         item.rank = idx + 1;
                     });
