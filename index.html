@@ -10,7 +10,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts: Inter & Playfair Display (для журнального курсиву) -->
+    <!-- Google Fonts: Inter & Playfair Display -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <style>
         body {
@@ -52,7 +52,7 @@
             <!-- Прикріплена (sticky) зелена плашка -->
             <div class="sticky top-4 z-50 mt-4 inline-flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 text-emerald-900 px-4 py-3 text-xs sm:text-sm font-medium shadow-md w-full sm:w-auto">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                <span>Офіційні підсумки трьох етапів стажування. Фінальний рейтинг є остаточним.</span>
+                <span>Результати оновлюються в режимі реального часу. Повні результати очікуються приблизно до 21:00. Оновлювати сторінку не потрібно.</span>
             </div>
         </header>
 
@@ -79,7 +79,8 @@
                     </template>
 
                     <template x-for="candidate in filteredCandidates" :key="candidate.id">
-                        <tr class="candidate-row hover:bg-neutral-50/80">
+                        <tr class="candidate-row hover:bg-neutral-50/80" 
+                            :class="candidate.rank <= 10 && candidate.total_score > 0 ? 'bg-emerald-50/50' : ''">
                             <!-- Місце -->
                             <td class="py-4 px-3 md:px-4 text-center font-bold text-neutral-900 align-top md:align-middle">
                                 <span x-text="candidate.rank" :class="candidate.rank <= 3 && candidate.total_score > 0 ? 'text-neutral-950 font-extrabold underline decoration-1 underline-offset-4' : 'text-neutral-500'"></span>
@@ -102,7 +103,7 @@
 
                                     <!-- Плашка Топ-10 -->
                                     <template x-if="candidate.rank <= 10 && candidate.total_score > 0">
-                                        <span class="text-[10px] uppercase bg-neutral-100 text-neutral-800 px-1.5 py-0.5 border border-neutral-200">Топ-10</span>
+                                        <span class="text-[10px] uppercase bg-neutral-900 text-white px-1.5 py-0.5 tracking-wider">Топ-10</span>
                                     </template>
                                 </div>
                                 <div class="text-xs text-neutral-500 mt-0.5">
@@ -110,7 +111,7 @@
                                 </div>
 
                                 <!-- Блок з балами по етапах (видимий ТІЛЬКИ на телефонах під ім'ям) -->
-                                <div class="mt-2 flex items-center gap-3 text-[11px] text-neutral-500 md:hidden bg-neutral-50 p-2 border border-neutral-100">
+                                <div class="mt-2 flex items-center gap-3 text-[11px] text-neutral-500 md:hidden bg-white/80 p-2 border border-neutral-200">
                                     <span>Е1: <strong class="text-neutral-800" x-text="Number(candidate.stage1).toFixed(1)"></strong></span>
                                     <span>•</span>
                                     <span>Е2: <strong class="text-neutral-800" x-text="Number(candidate.stage2).toFixed(1)"></strong></span>
@@ -187,6 +188,7 @@
 
                 get filteredCandidates() {
                     let res = this.rawCandidates.map(c => {
+                        Thes1 = parseFloat(c.stage1) || 0;
                         const s1 = parseFloat(c.stage1) || 0;
                         const s2 = parseFloat(c.stage2) || 0;
                         const s3 = parseFloat(c.stage3) || 0;
